@@ -21,6 +21,7 @@ _animated_box = SProxy :: SProxy "animated_box"
 data Action = Clicked
 
 
+component :: forall query input output m. H.Component HH.HTML query input output m
 component =
   H.mkComponent
   { initialState: const unit
