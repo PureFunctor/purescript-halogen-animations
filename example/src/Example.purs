@@ -43,5 +43,5 @@ component =
 
   handleAction = case _ of
     Clicked -> do
-      _ <- H.query _animated_box unit $ H.tell $ HN.ToggleAnimation unit
+      _ <- H.query _animated_box unit $ H.tell HN.ToggleAnimation
       pure unit

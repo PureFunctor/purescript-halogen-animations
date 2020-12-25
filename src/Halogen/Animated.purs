@@ -52,7 +52,7 @@ type State w m =
 
 
 data Query q =
-  ToggleAnimation Unit q
+  ToggleAnimation q
 
 
 initialState :: forall w m. Animations w m -> State w m
@@ -105,7 +105,7 @@ handleAction = case _ of
 
 handleQuery :: forall w m q. Query q -> DSL w m (Maybe q)
 handleQuery = case _ of
-  (ToggleAnimation _ q) -> do
+  (ToggleAnimation q) -> do
     state <- H.get
     case state.current of
       Start -> H.put $ state { current = ToFinal }
