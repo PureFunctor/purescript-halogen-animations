@@ -1,0 +1,46 @@
+.example {
+    min-height: 100vh;
+    min-width: 100vh;
+}
+
+.box {
+    width: 128px;
+    height: 128px;
+    background-color: black;
+}
+
+.move-and-open {
+    animation: move-and-open-animation 1s linear;
+    animation-fill-mode: forwards;
+}
+
+.move-and-lock {
+    animation: move-and-lock-animation 1s linear;
+    animation-fill-mode: forwards;
+}
+
+.opened {
+    transform: translateX(0%);
+}
+
+.locked {
+    transform: translateX(25%);
+}
+
+@keyframes move-and-open-animation {
+    0% {
+        transform: translateX(25%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes move-and-lock-animation {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(25%);
+    }
+}
