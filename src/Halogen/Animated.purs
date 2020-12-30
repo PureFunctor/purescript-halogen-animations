@@ -27,23 +27,52 @@ import Web.Event.Event (Event, EventType(..))
 
 
 -- | Halogen event handler for `animationend`.
+-- |
+-- | - `w` extends the `IProp`.
+-- | - `a` is the `action` that the `IProp` invokes.
 onAnimationEnd :: forall w a. (Event -> Maybe a) -> HP.IProp w a
 onAnimationEnd = HE.handler (EventType "animationend")
 
--- | ComponentHTML type to be passed to `Animations`
+
+-- | ComponentHTML type to be passed to `Animations`.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 type HTML w s m = H.ComponentHTML (Action w s m) s m
 
+
 -- | HalogenM type used internally by the component.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 type DSL w s m = H.HalogenM (State w s m) (Action w s m) s (Message w) m
 
+
 -- | Messages raised by the component from the internal `HTML` type.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
 type Message w = w
 
+
 -- | Helper type for defining slots in client code.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
 type Slot w s = H.Slot Query (Message w) s
 
 
 -- | A record of animations to be toggled from and to.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 type Animations w s m =
   { start   :: String
   , toFinal :: String
@@ -62,6 +91,11 @@ data AnimationState
 
 
 -- | Internal actions to be performed by the component.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 data Action w s m
   = ReceiveAnimations (Animations w s m)
   | HandleAnimationEnd
@@ -69,6 +103,11 @@ data Action w s m
 
 
 -- | Internal state of the component.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 type State w s m =
   { animations :: Animations w s m
   , current    :: AnimationState
@@ -80,6 +119,12 @@ data Query q =
   ToggleAnimation q
 
 
+-- | Internal initial state of the component.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 initialState :: forall w s m. Animations w s m -> State w s m
 initialState animations =
   { animations: animations
@@ -87,6 +132,12 @@ initialState animations =
   }
 
 
+-- | Internal render function of the component.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 render :: forall w s m. State w s m -> HTML w s m
 render { animations , current } =
   HH.div
@@ -102,6 +153,12 @@ render { animations , current } =
       ToStart -> animations.toStart
 
 
+-- | Component for adding animations.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 component :: forall w s m. H.Component HH.HTML Query (Animations w s m) (Message w) m
 component =
   H.mkComponent
@@ -113,7 +170,13 @@ component =
     }
   }
 
-
+-- | Internal `action` handler for toggling animations
+-- | and raising messages.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 handleAction :: forall w s m. Action w s m -> DSL w s m Unit
 handleAction = case _ of
   ReceiveAnimations animations -> do
@@ -128,6 +191,12 @@ handleAction = case _ of
   Raise message -> H.raise message
 
 
+-- | Internal `query` handler for toggling animations.
+-- |
+-- | - `w` is the `message` to be raised by the wrapped
+-- |   component that's actually an `action`.
+-- | - `s` is the `state` of the component.
+-- | - `m` is the `monad` of the component.
 handleQuery :: forall w s m q. Query q -> DSL w s m (Maybe q)
 handleQuery = case _ of
   (ToggleAnimation q) -> do
