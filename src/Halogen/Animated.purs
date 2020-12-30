@@ -1,4 +1,20 @@
-module Halogen.Animated where
+module Halogen.Animated
+  ( onAnimationEnd
+  , HTML
+  , DSL
+  , Message
+  , Slot
+  , Animations
+  , AnimationState(..)
+  , Action(..)
+  , State
+  , Query(..)
+  , initialState
+  , render
+  , component
+  , handleAction
+  , handleQuery
+  ) where
 
 import Prelude
 
@@ -10,19 +26,24 @@ import Halogen.HTML.Properties as HP
 import Web.Event.Event (Event, EventType(..))
 
 
+-- | Halogen event handler for `animationend`.
 onAnimationEnd :: forall w a. (Event -> Maybe a) -> HP.IProp w a
 onAnimationEnd = HE.handler (EventType "animationend")
 
-
+-- | ComponentHTML type to be passed to `Animations`
 type HTML w s m = H.ComponentHTML (Action w s m) s m
 
+-- | HalogenM type used internally by the component.
 type DSL w s m = H.HalogenM (State w s m) (Action w s m) s (Message w) m
 
+-- | Messages raised by the component from the internal `HTML` type.
 type Message w = w
 
+-- | Helper type for defining slots in client code.
 type Slot w s = H.Slot Query (Message w) s
 
 
+-- | A record of animations to be toggled from and to.
 type Animations w s m =
   { start   :: String
   , toFinal :: String
@@ -32,6 +53,7 @@ type Animations w s m =
   }
 
 
+-- | The current state of the animation.
 data AnimationState
   = Start
   | ToFinal
@@ -39,18 +61,21 @@ data AnimationState
   | ToStart
 
 
+-- | Internal actions to be performed by the component.
 data Action w s m
   = ReceiveAnimations (Animations w s m)
   | HandleAnimationEnd
   | Raise w
 
 
+-- | Internal state of the component.
 type State w s m =
   { animations :: Animations w s m
   , current    :: AnimationState
   }
 
 
+-- | Query type used to interact with the component.
 data Query q =
   ToggleAnimation q
 
