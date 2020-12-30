@@ -3,10 +3,20 @@
     min-width: 100vh;
 }
 
-.box {
+.outer-box {
     width: 128px;
     height: 128px;
     background-color: black;
+    position: relative;
+    z-index: 10;
+}
+
+.inner-box {
+    width: 64px;
+    height: 64px;
+    background-color: gray;
+    position: absolute;
+    z-index: 0;
 }
 
 .move-and-open {
