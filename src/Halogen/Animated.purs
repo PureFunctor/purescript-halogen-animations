@@ -14,21 +14,21 @@ onAnimationEnd :: forall w a. (Event -> Maybe a) -> HP.IProp w a
 onAnimationEnd = HE.handler (EventType "animationend")
 
 
-type HTML w m = H.ComponentHTML (Action w m) () m
+type HTML w s m = H.ComponentHTML (Action w s m) s m
 
-type DSL w m = H.HalogenM (State w m) (Action w m) () (Message w) m
+type DSL w s m = H.HalogenM (State w s m) (Action w s m) s (Message w) m
 
 type Message w = w
 
 type Slot w s = H.Slot Query (Message w) s
 
 
-type Animations w m =
+type Animations w s m =
   { start   :: String
   , toFinal :: String
   , final   :: String
   , toStart :: String
-  , render  :: HTML w m
+  , render  :: HTML w s m
   }
 
 
@@ -39,14 +39,14 @@ data AnimationState
   | ToStart
 
 
-data Action w m
-  = ReceiveAnimations (Animations w m)
+data Action w s m
+  = ReceiveAnimations (Animations w s m)
   | HandleAnimationEnd
   | Raise w
 
 
-type State w m =
-  { animations :: Animations w m
+type State w s m =
+  { animations :: Animations w s m
   , current    :: AnimationState
   }
 
@@ -55,14 +55,14 @@ data Query q =
   ToggleAnimation q
 
 
-initialState :: forall w m. Animations w m -> State w m
+initialState :: forall w s m. Animations w s m -> State w s m
 initialState animations =
   { animations: animations
   , current: Start
   }
 
 
-render :: forall w m. State w m -> HTML w m
+render :: forall w s m. State w s m -> HTML w s m
 render { animations , current } =
   HH.div
   [ onAnimationEnd \_ -> Just HandleAnimationEnd
@@ -77,7 +77,7 @@ render { animations , current } =
       ToStart -> animations.toStart
 
 
-component :: forall w m. H.Component HH.HTML Query (Animations w m) (Message w) m
+component :: forall w s m. H.Component HH.HTML Query (Animations w s m) (Message w) m
 component =
   H.mkComponent
   { initialState
@@ -89,7 +89,7 @@ component =
   }
 
 
-handleAction :: forall w m. Action w m -> DSL w m Unit
+handleAction :: forall w s m. Action w s m -> DSL w s m Unit
 handleAction = case _ of
   ReceiveAnimations animations -> do
     state <- H.get
@@ -103,7 +103,7 @@ handleAction = case _ of
   Raise message -> H.raise message
 
 
-handleQuery :: forall w m q. Query q -> DSL w m (Maybe q)
+handleQuery :: forall w s m q. Query q -> DSL w s m (Maybe q)
 handleQuery = case _ of
   (ToggleAnimation q) -> do
     state <- H.get
