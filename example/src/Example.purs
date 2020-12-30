@@ -15,7 +15,7 @@ css :: forall a r. String -> HP.IProp (class :: String | r) a
 css = HP.class_ <<< H.ClassName
 
 
-type Slots = (animated_box :: HN.Slot Void Int)
+type Slots = (animated_box :: HN.Slot Action Int)
 
 
 _animated_box = SProxy :: SProxy "animated_box"
@@ -35,17 +35,26 @@ component =
   }
 
 
-render :: forall state m. state -> HH.ComponentHTML Action Slots m
+render :: forall m. Unit -> H.ComponentHTML Action Slots m
 render _ =
-  HH.div [ css "example" , HE.onClick \_ -> Just $ Clicked 0 ]
+  HH.div [ css "example" ]
   [ HH.slot _animated_box 0 HN.component
     { start: "opened"
     , toFinal: "move-and-lock"
     , final: "locked"
     , toStart: "move-and-open"
-    , render: HH.div [ css "box" ] [ ]
-    } absurd
+    , render: HH.div [ css "outer-box" , HE.onClick \_ -> Just $ HN.Raise $ Clicked 0 ] [ inner ]
+    } Just
   ]
+  where
+    inner =
+      HH.slot _animated_box 1 HN.component
+        { start: "opened"
+        , toFinal: "move-and-lock"
+        , final: "locked"
+        , toStart: "move-and-open"
+        , render: HH.div [ css "inner-box" , HE.onClick \_ -> Just $ HN.Raise $ Clicked 1 ] [ ]
+        } $ Just <<< HN.Raise
 
 
 handleAction :: forall state output m. Action -> H.HalogenM state Action Slots output m Unit
