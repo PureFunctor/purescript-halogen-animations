@@ -4,7 +4,7 @@ You can edit this file as you like.
 -}
 { name = "purescript-halogen-animations"
 , dependencies =
-  [ "console", "effect", "free", "halogen", "psci-support", "typelevel-lists" ]
+  [ "halogen", "halogen-hooks" ]
 , packages = ./packages.dhall
-, sources = [ "src/**/*.purs", "test/**/*.purs" ]
+, sources = [ "src/**/*.purs" ]
 }
