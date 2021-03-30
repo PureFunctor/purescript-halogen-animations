@@ -68,3 +68,39 @@ body {
   padding: 2rem;
   overflow: auto;
 }
+
+.on-start {
+    transform: translateX(0%);
+}
+
+.to-final {
+    animation: start-to-final 1s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.on-final {
+    transform: translateX(25%);
+}
+
+.to-start {
+    animation: final-to-start 1s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes start-to-final {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(25%);
+    }
+}
+
+@keyframes final-to-start {
+    0% {
+        transform: translateX(25%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
